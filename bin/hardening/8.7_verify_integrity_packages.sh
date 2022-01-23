@@ -4,7 +4,7 @@
 # harbian-audit for Debian GNU/Linux 7/8/9/10 or CentOS  Hardening
 #
 #
-# 8.7 Verifies integrity all packages (Scored)
+# 8.6 Verifies integrity all packages (Scored)
 # Author : Samson wen, Samson <sccxboy@gmail.com>
 #
 

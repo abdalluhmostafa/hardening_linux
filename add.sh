@@ -1,8 +1,8 @@
 set -e
 #read -p 'Enter UserName: ' NEWUSER
 #read -p 'Enter Your Public Key: ' USERPUBKEY
-NEWUSER=ahmed
-USERPUBKEY='ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDeb5EhYYO14gfA5qC9QdE/+N1v8IzOJ0Dwkyvx3RlkrqZtJI87859uRMH9iNLvId1BeP5FKmNXxWVlIAxKVnIUyE2EpnaGvXVHZeNI733ytHuMLr6fUn4YqQWANZev1L0SXvIA/UpaQ2/7upSyXwq8jnQ91aj8hQGVNksckW/qzssg+7rEw+gJB0Ok6zcFhEVJP4xB9xzbme78L/iWpTsYwh/HyL5hv9t/GpIALZvL+AWqj0uzLj6kkI/352inOtG/jFhAbcCyNwNDhGVJ0dxw5ZfonnQ8Kiu13uubeK54JJnSlvn9AkZL0YUxMmFRJY9ff50g5Yck1C1hMuuI8nPTzMbaDVrO+Bgc9p55Kb5KIC+LavMUx9leA7VRLIaQDGFcruuaD8xam9LSzRyQocjJrmlIWD7kgd8mZyTmUagiBAfmN5N+7eCdVzdIkCo3RDaqJ5l1LVaVxiPYDrtb51yV7oYmvX10yysqIlnhEWXphp1zuqdxueF+4OidS6moJxk= abdalluh@Abdalluh'
+NEWUSER=USER-SSH
+USERPUBKEY='KEY-SSH'
 
 
 if [ -z "$NEWUSER" ]; then

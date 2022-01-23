@@ -5,7 +5,8 @@
 #
 
 #
-# 1.2 Enable Option for signature of packages from a repository (Scored)
+# 1.3 Enable verify the signature of local packages (Scored)
+# Dependance pkg: debsig-verify
 # Author : Samson wen, Samson <sccxboy@gmail.com>
 #
 
@@ -13,39 +14,40 @@ set -e # One error, it's over
 set -u # One variable unset, it's over
 
 HARDENING_LEVEL=2
-OPTION='AllowUnauthenticated'
-YUM_OPTION='gpgcheck'
-YUM_CONF='/etc/yum.conf'
+OPTION='no-debsig'
+CONFFILE='/etc/dpkg/dpkg.cfg'
 
-audit_debian ()
-{
-    if [ $(grep -v "^#" /etc/apt/ -Ir | grep -c "${OPTION}.*true") -gt 0 ]; then
-        crit "The signature of packages option is disable "
+YUM_OPTION='localpkg_gpgcheck'
+YUM_CONFFILE='/etc/yum.conf'
+
+audit_debian () {
+    if [ $(grep -v "^#" ${CONFFILE} | grep -c ${OPTION}) -gt 0 ]; then
+        crit "The signature of local packages option is disable "
         FNRET=1
     else
-        ok "The signature of packages option is enable "
+        ok "The signature of local packages option is enable "
         FNRET=0
     fi
 }
 
 audit_centos ()
 {
-	if [ $(grep -c "^$YUM_OPTION" $YUM_CONF) -gt 0 ]; then
-		if [ $(grep "^$YUM_OPTION" $YUM_CONF | awk -F"=" '{print $2}') -eq 1 ]; then
-			ok "The signature of packages option is enable "
-			FNRET=0
-		else
-			crit "The signature of packages option is disable "
-			FNRET=1
-		fi
-	else
-		crit "Option $YUM_OPTION is not set in $YUM_CONF!"
-		FNRET=2
-	fi
+    if [ $(grep -c "^$YUM_OPTION" $YUM_CONFFILE) -gt 0 ]; then
+        if [ $(grep "^$YUM_OPTION" $YUM_CONFFILE | awk -F"=" '{print $2}') -eq 1 ]; then
+            ok "The signature of packages option is enable "
+            FNRET=0
+        else
+            crit "The signature of packages option is disable "
+            FNRET=1
+        fi
+    else
+        crit "Option $YUM_OPTION is not set in $YUM_CONFFILE!"
+        FNRET=2
+    fi
 }
 
 # This function will be called if the script status is on enabled / audit mode
-audit () 
+audit()
 {
 	if [ $OS_RELEASE -eq 1 ]; then
         audit_debian
@@ -57,33 +59,30 @@ audit ()
     fi
 }
 
-
 apply_debian () {
     if [ $FNRET = 0 ]; then 
-        ok "The signature of packages option is enable "
+        ok "The signature of local packages option is enable "
     else
-        warn "Set to enabled signature of packages option"
-        for CONFFILE in $(grep -i "${OPTION}" /etc/apt/ -Ir | grep -v "^#" | awk -F: '{print $1}')
-        do
-			backup_file ${CONFFILE}	
-			sed -i "s/${OPTION}.*true.*/${OPTION} \"false\";/g" ${CONFFILE}
-        done
+        warn "Set to enabled signature of local packages option"
+			backup_file $CONFFILE
+            sed -i "s/^${OPTION}/#&/" ${CONFFILE}
     fi
 }
+
 apply_centos () {
-	if [ $FNRET = 0 ]; then 
-		ok "The signature of packages option is enable "
-	elif [ $FNRET = 1 ]; then
-		warn "Set to enabled signature of packages option"
-		backup_file $YUM_CONF
-		sed -i "s/$YUM_OPTION=.*/$YUM_OPTION=1/g" $YUM_CONF
-		
-	else 
-		warn "Add $YUM_OPTION option to $YUM_CONF"
-		backup_file $YUM_CONF
-		add_end_of_file $YUM_CONF "$YUM_OPTION=1"
+    if [ $FNRET = 0 ]; then
+        ok "The signature of packages option is enable "
+    elif [ $FNRET = 1 ]; then
+		backup_file $YUM_CONFFILE
+        warn "Set to enabled signature of packages option"
+        sed -i "s/$YUM_OPTION=.*/$YUM_OPTION=1/g" $YUM_CONFFILE
+    else
+		backup_file $YUM_CONFFILE
+        warn "Add $YUM_OPTION option to $YUM_CONFFILE"
+        add_end_of_file $YUM_CONFFILE "$YUM_OPTION=1"
     fi
 }
+
 
 # This function will be called if the script status is on enabled mode
 apply () {
@@ -95,7 +94,6 @@ apply () {
         crit "Current OS is not support!"
     fi
 }
-
 # This function will check config parameters required
 check_config() {
     # No parameters for this function

@@ -5,7 +5,7 @@
 #
 
 #
-# 8.1.32 Record netfilter related Events (Scored)
+# 8.1.18 Record netfilter related Events (Scored)
 # Author: Samson-W (samson@hardenedlinux.org) author add this 
 # todo test for centos
 
@@ -13,11 +13,6 @@ set -e # One error, it's over
 set -u # One variable unset, it's over
 
 HARDENING_LEVEL=4
-
-AUDIT_PARAMS='-w /etc/nftables.conf -p wa -k nft_config_file_change
--w /usr/share/netfilter-persistent/plugins.d/ -p wa -k nft_config_file_change
--a always,exit -F path=/usr/sbin/netfilter-persistent -F perm=x -F auid>=1000 -F auid!=4294967295 -k nft_persistent_use
--a always,exit -F path=/usr/sbin/nft -F perm=x -F auid>=1000 -F auid!=4294967295 -k nft_cmd_use'
 
 FILE='/etc/audit/rules.d/audit.rules'
 
@@ -69,7 +64,17 @@ apply () {
 
 # This function will check config parameters required
 check_config() {
-	:
+	if [ $DONT_AUDITD_BY_UID -eq 1 ]; then
+AUDIT_PARAMS='-w /etc/nftables.conf -p wa -k nft_config_file_change
+-w /usr/share/netfilter-persistent/plugins.d/ -p wa -k nft_config_file_change
+-w /usr/sbin/netfilter-persistent -p x -k nft_persistent_use
+-w /usr/sbin/nft -p x -k nft_cmd_use'
+	else
+AUDIT_PARAMS='-w /etc/nftables.conf -p wa -k nft_config_file_change
+-w /usr/share/netfilter-persistent/plugins.d/ -p wa -k nft_config_file_change
+-w /usr/sbin/netfilter-persistent -p x -F auid>=1000 -F auid!=4294967295 -k nft_persistent_use
+-w /usr/sbin/nft -p x -F auid>=1000 -F auid!=4294967295 -k nft_cmd_use'
+	fi
 }
 
 # Source Root Dir Parameter
