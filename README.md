@@ -31,7 +31,7 @@ hardening                 [INFO] Treating /home/test/harbian-audit/bin/hardening
 ## Quickstart
 
 ```console
-$ git clone https://github.com/hardenedlinux/harbian-audit.git && cd harbian-audit
+$ git clone https://github.com/abdalluhmostafa/hardening_linux && cd harbian-audit
 # cp etc/default.cfg /etc/default/cis-hardening
 # sed -i "s#CIS_ROOT_DIR=.*#CIS_ROOT_DIR='$(pwd)'#" /etc/default/cis-hardening
 # bin/hardening.sh --init
@@ -207,12 +207,6 @@ These are all related to the aide. It is best to fix all the items after they ha
 4.5  
 
 ## Hacking
-
-**Getting the source**
-
-```console
-$ git clone https://github.com/hardenedlinux/harbian-audit.git
-```
 
 **Adding a custom hardening script**
 
