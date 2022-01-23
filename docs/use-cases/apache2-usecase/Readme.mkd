@@ -1,0 +1,30 @@
+# Apache2 deploy 
+
+## Install 
+```
+# apt-get install apache2  
+```
+
+# How to use harbian-audit to audit and apply 
+
+## Set firewall 
+```
+sed -i 's/PUB_IFS=.*/PUB_IFS="interface of machine"/g' ./etc.iptables.rules.v4.4http.sh
+# bash ./etc.iptables.rules.v4.4http.sh
+```
+
+## Audit and apply 
+See the documentation for more details:   
+[harbian-audit-readme](https://github.com/hardenedlinux/harbian-audit/blob/master/README.md) 
+
+```
+# bash bin/hardening.sh --audit-all 
+```
+This is set special service to exception(6.10)
+```
+# bash bin/hardening.sh --set-hardening-level 5 --allow-service http
+# bash bin/hardening.sh --audit-all 
+# bash bin/hardening.sh --apply
+```
+
+
